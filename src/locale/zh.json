@@ -1,0 +1,27 @@
+{
+    "route": {
+        "dashboard": "首页"
+    },
+    "login": {
+        "title": "PI 后台管理系统",
+        "username": "用户名",
+        "password": "密码",
+        "login": "登录",
+        "logining": "登录中...",
+        "code": "请输入验证码",
+        "copyright": "Copyright © 2022 ZnPi All Rights Reserved."
+    },
+    "toolbar": {
+        "dashboard": "首页",
+        "info": "个人信息",
+        "logout": "注销"
+    },
+    "size": {
+        "small": "小型",
+        "default": "默认",
+        "large": "大型"
+    },
+    "tip": {
+        "switchSizeSuccess": "切换布局大小成功"
+    }
+}

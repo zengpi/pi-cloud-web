@@ -1,0 +1,40 @@
+.app-container {
+    padding: 20px;
+
+    .head-container {
+        padding-bottom: 10px;
+
+        .query {
+            padding-bottom: 4px;
+
+            .query-item {
+                margin: 0 3px 0 0;
+            }
+        }
+
+        .tools {
+            padding: 4px 0;
+            display: flex;
+
+            .tools-right {
+                margin-left: auto;
+            }
+
+            .tool-item {
+                vertical-align: middle;
+                margin: 0 3px 0 0;
+            }
+        }
+    }
+
+    .pagination {
+        border: 1px solid #e8eaec;
+        border: 1px solid rgb(232, 234, 236);
+        border-top: 0;
+        padding: 5px 0;
+    }
+
+    .splitpanes.default-theme .splitpanes__pane {
+        background: #fff;
+    }
+}

@@ -1,0 +1,31 @@
+.sidebar-collapsed {
+    .sidebar-container {
+        width: $sidebar-collapsed-width  !important;
+
+        .el-menu--collapse {
+            .el-sub-menu {
+                &>.el-sub-menu__title {
+                    &>span {
+                        height: 0;
+                        width: 0;
+                        overflow: hidden;
+                        visibility: hidden;
+                        display: inline-block;
+                    }
+
+                    &>.el-sub-menu__icon-arrow {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+
+    .sizebar-right {
+        margin-left: $sidebar-collapsed-width  !important;
+
+        .fixed-header {
+            width: calc(100% - $sidebar-collapsed-width) !important;
+        }
+    }
+}

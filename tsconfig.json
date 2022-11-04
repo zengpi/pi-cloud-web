@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "types": [
+      "vite-plugin-svg-icons/client"
+    ]
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.config.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.vitest.json"
+    }
+  ]
+}

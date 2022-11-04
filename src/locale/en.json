@@ -1,0 +1,27 @@
+{
+    "route": {
+        "dashboard": "Dashboard"
+    },
+    "login": {
+        "title": "PI-CLOUD",
+        "username": "Username",
+        "password": "Password",
+        "login": "Login",
+        "logining": "Logining...",
+        "code": "Verification Code",
+        "copyright": "Copyright © 2022 ZnPi All Rights Reserved. "
+    },
+    "toolbar": {
+        "dashboard": "Dashboard",
+        "info": "Profile",
+        "logout": "Logout"
+    },
+    "size": {
+        "small": "Small",
+        "default": "Default",
+        "large": "Large"
+    },
+    "tip": {
+        "switchSizeSuccess": "Succeeded in changing the size"
+    }
+}
