@@ -13,6 +13,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "axios": "^0.21.4",
     "element-plus": "^2.2.19",
     "nprogress": "^0.2.0",
     "path-browserify": "^1.0.1",

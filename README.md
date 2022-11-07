@@ -1,12 +1,13 @@
 # pi-cloud-web
 
-pi-cloud-web 是 pi-cloud 的前端源码，它是基于 Vue 3、Vite 2、Typescript、Pinia、ElementPlus 构建的。
+pi-cloud-web 是 [pi-cloud](https://gitee.com/linjiabin100/pi-cloud.git) 的前端源码，它是基于 Vue 3、Vite 3、Typescript、Pinia、ElementPlus 等前端主流技术栈构建的。
 
 ## 特性
 
 - 使用基于 Vite 的构建设置进行 Vue 3 开发
 - 页面基于 ElementPlus 构建
 - 使用 Pinia 进行状态管理
+- 国际化、按钮权限、ElementPlus 自定义主题
 
 ## 预览
 
@@ -27,7 +28,7 @@ pi-cloud-web 是 pi-cloud 的前端源码，它是基于 Vue 3、Vite 2、Typesc
 
 ### nvm-windows
 
-nvm-windows 用于在 Windows 中管理 node.js 的多个版本安装。安装程序请点击[此处](https://github.com/coreybutler/nvm-windows/releases)下载，具体使用方式请参考[官方文档](https://github.com/coreybutler/nvm-windows)。以下是常用操作：
+nvm-windows 用于在 Windows 中管理 node.js 的多个版本安装。安装程序请点击 [此处](https://github.com/coreybutler/nvm-windows/releases) 下载，具体使用方式请参考 [官方文档](https://github.com/coreybutler/nvm-windows)。以下是常用操作：
 
 ```shell
 # 设置 node 国内镜像
@@ -61,6 +62,6 @@ npm run test:e2e:dev
 
 ## 参考文档
 
-一定要阅读 pi-cloud-web 的 [参考文档](https://www.yuque.com/docs/share/26538748-5447-4df7-a96f-f4688004c7d3)，它描述了开发、运行 pi-cloud-web 的必要信息以及核心原理。
+一定要阅读 pi-cloud-web 的 [参考文档](https://www.yuque.com/zengpi/szfuh0)，它描述了开发、运行 pi-cloud-web 的必要信息以及核心原理。
 
 阅读 [个人博客](https://www.cnblogs.com/zn-pi/) 也是一个不错的选择，它是对文档很好的一个补充，阅读它会对项目有更深的理解。
