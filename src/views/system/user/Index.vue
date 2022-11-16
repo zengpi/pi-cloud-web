@@ -33,7 +33,7 @@ import { getDeptTree } from '@/api/system/dept';
 import Form from './Form.vue'
 import UserImport from "./UserImport.vue";
 
-let showSearch = ref<boolean>(true)
+let showSearch = ref(true)
 
 let query = ref<QueryParam>(new QueryParam())
 
@@ -407,9 +407,8 @@ onMounted(() => {
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination v-model:currentPage="query.pageNum" v-model:page-size="query.pageSize"
-          :page-sizes="[1, 100, 200, 300, 400]" layout="total, sizes, prev, pager, next, jumper" :total="total"
-          @size-change="loadData" @current-change="loadData" />
+        <Pagination :total="total" v-model:current-page="query.pageNum" v-model:page-size="query.pageSize"
+          @pagination="loadData" />
         <Form v-if='userFormDialog.dialogVisible' v-model:dialogVisible='userFormDialog.dialogVisible'
           :is-edit="userFormDialog.isEdit" :form="userFormDialog.form" @refresh="loadData" />
         <UserImport v-if='userImportDialog.dialogVisible' v-model:dialogVisible="userImportDialog.dialogVisible"

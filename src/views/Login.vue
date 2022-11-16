@@ -79,7 +79,7 @@ onMounted(() => {
             </el-form-item>
             <el-form-item prop="password">
                 <el-input v-model="loginForm.password" type="password" :prefix-icon="Lock" auto-complete="off"
-                    :placeholder="$t('login.password')" @keyup.enter.native="handleLogin(formRef)" />
+                    :placeholder="$t('login.password')" @keyup.enter.native="handleLogin(formRef)" show-password />
             </el-form-item>
             <el-form-item prop="code">
                 <el-input v-model="loginForm.code" :prefix-icon="Checked" auto-complete="off"
