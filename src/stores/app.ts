@@ -17,7 +17,7 @@ const useAppStore = defineStore('app', () => {
     /**
      * 侧边栏是否折叠
      */
-    const sidebarCollapsed = ref(localStorage.get(LocalStorageEnum.SIDEBAR_STATUS))
+    const sidebarCollapsed = ref(localStorage.get(LocalStorageEnum.SIDEBAR_STATUS) || false)
 
     /**
      * 折叠/展开侧边栏
