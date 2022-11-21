@@ -21,7 +21,9 @@ function resolvePath(routePath: string) {
   if (isExternalLink(props.basePath)) {
     return props.basePath;
   }
-  return path.resolve(props.basePath, routePath);
+  let basePath = props.basePath;
+  if (!basePath) basePath = "/"
+  return path.resolve(basePath, routePath);
 }
 </script>
 
@@ -58,5 +60,6 @@ function resolvePath(routePath: string) {
 </template>
 
 <style lang="scss" scoped>
+
 </style>
   

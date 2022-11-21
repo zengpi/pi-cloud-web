@@ -189,8 +189,8 @@ onMounted(() => {
       <el-table-column prop="icon" label="图标" width="70" #default="{ row }">
         <SvgIcon v-if="row.icon" :name="row.icon" />
       </el-table-column>
-      <el-table-column prop="path" label="路由路径" width="90" />
-      <el-table-column prop="componentName" label="组件名称" width="110" />
+      <el-table-column prop="path" label="路由路径" width="150" show-overflow-tooltip />
+      <el-table-column prop="componentName" label="组件名称" width="140" />
       <el-table-column prop="component" label="组件路径" width="180" />
       <el-table-column prop="permission" label="权限标识" width="120" />
       <el-table-column prop="sort" label="排序" width="60" />
@@ -217,7 +217,7 @@ onMounted(() => {
         <el-tag v-else-if="row.visible === 1" class="mx-1" effect="dark">可见</el-tag>
       </el-table-column>
       <el-table-column prop="redirect" label="重定向路径" width="140" />
-      <el-table-column prop="createTime" label="创建时间" width="160" />
+      <el-table-column prop="createTime" label="创建时间" width="170" />
       <el-table-column fixed="right" label="操作" width="155px" align="center">
         <template #default="scope">
           <el-tooltip content="编辑" placement="top">
