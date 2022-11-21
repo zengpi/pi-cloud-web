@@ -55,6 +55,11 @@ function handleLogout() {
         <div class="tools-container">
             <SizeSelect id="size-select" class="tool" />
             <LocaleSelect class="tool" />
+            <el-tooltip :content="$t('toolbar.document')" placement="bottom">
+                <a target="_blank" href="https://www.yuque.com/zengpi/szfuh0">
+                    <SvgIcon name="document" width="20" height="20" class="tool" />
+                </a>
+            </el-tooltip>
             <div class="avatar-container">
                 <img :src="useUserStore.avatar" class="avatar" />
             </div>

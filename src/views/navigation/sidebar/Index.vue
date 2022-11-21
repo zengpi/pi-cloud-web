@@ -17,7 +17,8 @@ const route = useRoute();
         <Logo v-if="settings.showLogo" :collapse="useAppStore.sidebarCollapsed" />
 
         <el-scrollbar class="scrollbar">
-            <el-menu :default-active="route.path" :collapse="useAppStore.sidebarCollapsed" :collapse-transition="false">
+            <el-menu unique-opened :default-active="route.path" :collapse="useAppStore.sidebarCollapsed"
+                :collapse-transition="false">
                 <SidebarItem v-for="route in useRouterStore.routers" :item="route" :key="route.path"
                     :base-path="route.path" />
             </el-menu>
