@@ -94,10 +94,8 @@ function handleDel(index: number, row: RegisteredClient) {
                 message: "删除成功"
             })
             tableData.value.splice(index, 1);
-            delBtnLoading.value = false;
-        }).catch(() => {
-            delBtnLoading.value = false;
-        })
+        }).catch(() => { })
+        delBtnLoading.value = false;
     })
 }
 
@@ -178,7 +176,7 @@ function loadData() {
     getClients(query.value).then(({ data }) => {
         tableData.value = data.records;
         total.value = data.total;
-    })
+    }).catch(() => { })
     loading.value = false;
 }
 
