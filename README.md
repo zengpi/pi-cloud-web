@@ -11,9 +11,12 @@ pi-cloud-web 是 [pi-cloud](https://gitee.com/linjiabin100/pi-cloud.git) 的前�
 
 ## 预览
 
-| ![image-20221104164240613.png](https://gitee.com/linjiabin100/pi-cloud-resource/raw/master/imgs/image-20221104164240613.png) | ![image-20221104164357964](https://gitee.com/linjiabin100/pi-cloud-resource/raw/master/imgs/image-20221104164357964.png) |
+## 
+
+| ![image-20221104164240613.png](https://gitee.com/linjiabin100/pi-cloud-resource/raw/master/imgs/image-20221104164240613.png) | ![image-20221104164357964](https://gitee.com/linjiabin100/pi-cloud-resource/raw/master/imgs/Snipaste_2022-11-22_11-18-12.png) |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![image-20221104164416152](https://gitee.com/linjiabin100/pi-cloud-resource/raw/master/imgs/image-20221104164416152.png) | ![image-20221104164428444](https://gitee.com/linjiabin100/pi-cloud-resource/raw/master/imgs/image-20221104164428444.png) |
+| ![image-20221104164416152](https://gitee.com/linjiabin100/pi-cloud-resource/raw/master/imgs/Snipaste_2022-11-22_11-18-34.png) | ![image-20221104164428444](https://gitee.com/linjiabin100/pi-cloud-resource/raw/master/imgs/Snipaste_2022-11-22_11-18-52.png) |
+| ![Snipaste_2022-11-22_11-19-14](https://gitee.com/linjiabin100/pi-cloud-resource/raw/master/imgs/Snipaste_2022-11-22_11-19-14.png) | ![Snipaste_2022-11-22_11-12-16](https://gitee.com/linjiabin100/pi-cloud-resource/raw/master/imgs/Snipaste_2022-11-22_11-12-16.png) |
 
 ## 源码
 
@@ -21,6 +24,20 @@ pi-cloud-web 是 [pi-cloud](https://gitee.com/linjiabin100/pi-cloud.git) 的前�
 | ---- | ----------------------------------------------- | ------------------------------------------ |
 | 后端 | https://gitee.com/linjiabin100/pi-cloud.git     | https://github.com/zengpi/pi-cloud.git     |
 | 前端 | https://gitee.com/linjiabin100/pi-cloud-web.git | https://github.com/zengpi/pi-cloud-web.git |
+
+## 项目功能模块
+
+```
+- 系统管理
+	- 用户管理
+	- 菜单管理
+	- 角色管理
+	- 客户端管理
+- 系统监控
+	- 接口文档
+	- 操作日志
+	- 服务监控
+```
 
 ## 运行环境  
 
