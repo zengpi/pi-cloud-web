@@ -1,69 +1,96 @@
-import { BaseDialog, BaseQueryParam } from "..";
+import { BaseQuery } from "..";
 
-class QueryParam extends BaseQueryParam {
-
+/**
+ * 获取角色成员查询参数
+ */
+class RoleMemberQuery extends BaseQuery {
+  /**
+   * 角色 ID
+   */
+  roleId?: number;
 }
 
-class RoleMemberQueryParam extends BaseQueryParam {
-    roleId?: number;
-}
-
-class FormDialog extends BaseDialog {
-    props: {
-        isEdit?: boolean,
-        formData?: Role
-    } = {
-        isEdit: false,
-    }
-}
-
+/**
+ * 角色
+ */
 class Role {
-    /**
-     * 角色 ID
-     */
-    id?: number;
-    /**
-     * 角色名称
-     */
-    name?: string;
-    /**
-     * 角色编码
-     */
-    roleCode?: string;
-    /**
-     * 角色描述
-     */
-    roleDesc?: string;
+  /**
+   * 角色 ID
+   */
+  id?: number;
+  /**
+   * 角色名称
+   */
+  name?: string;
+  /**
+   * 角色编码
+   */
+  roleCode?: string;
+  /**
+   * 角色描述
+   */
+  roleDesc?: string;
 }
 
+/**
+ * 角色成员
+ */
 interface RoleMember {
-    id: number;
-    username: string;
-    nickname: string;
-    deptName: string;
+  /**
+   * 标识
+   */
+  id: number;
+  /**
+   * 用户名
+   */
+  username: string;
+  /**
+   * 昵称
+   */
+  nickname: string;
+  /**
+   * 部门名称
+   */
+  deptName: string;
 }
 
 /**
- * 分配用户角色 DTO
+ * 角色用户分配
  */
-class AllocationRoleUserDTO {
-    roleId?: number;
-    addUserIds?: string;
-    removeUserIds?: string;
+class RoleUserAllocation {
+  /**
+   * 角色 ID
+   */
+  roleId?: number;
+  /**
+   * 待分配用户 ID，多个以逗号分隔
+   */
+  toBeAddUserIds?: string;
+  /**
+   * 待移除用户 ID，多个以逗号分隔
+   */
+  toBeRemoveUserIds?: string;
 }
 
 /**
- * 分配用户菜单 DTO
+ * 角色菜单分配
  */
-class AllocationRoleMenuDTO {
-    roleId?: number;
-    menuIds?: string;
-    constructor(roleId?: number, menuIds?: string){
-        this.roleId = roleId;
-        this.menuIds = menuIds;
-    }
+class RoleMenuAllocation {
+  /**
+   * 角色 ID
+   */
+  roleId?: number;
+  /**
+   * 菜单 ID 列表，多个以逗号分隔
+   */
+  menuIds?: string;
+
+  constructor(roleId?: number, menuIds?: string) {
+    this.roleId = roleId;
+    this.menuIds = menuIds;
+  }
 }
 
-export { QueryParam, RoleMemberQueryParam, FormDialog, Role, AllocationRoleUserDTO, AllocationRoleMenuDTO }
+export { RoleMemberQuery, Role, RoleUserAllocation, RoleMenuAllocation };
 
-export type { RoleMember }
+export type { RoleMember };

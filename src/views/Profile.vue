@@ -1,196 +1,224 @@
-<script setup name="profile" lang="ts">
-import { ref, onMounted, computed, watch } from 'vue';
-import { type FormInstance, type FormRules, ElMessage } from 'element-plus';
-import MyUpload from 'vue-image-crop-upload';
+<script setup name="Profile" lang="ts">
+import { ref, onMounted, computed } from "vue";
 
-import { User } from "@/entity/system/user"
+import { type FormInstance, type FormRules, ElMessage } from "element-plus";
 
-import { profileEdit } from "@/api/system/user"
+import useStore from "@/stores";
 
-import { isPhone } from "@/util/validate"
-import { localStorage } from '@/util/storage';
+import { isPhone } from "@/util/validate";
+import { localStorage } from "@/util/storage";
 
-import useStore from "@/stores"
+import { profileEdit } from "@/api/system/user";
 
-let comfirmLoading = ref<Boolean>()
+import { Profile } from "@/entity/system/user";
 
-let formData = ref<User>(new User())
+import MyUpload from "vue-image-crop-upload";
 
-const form = ref<FormInstance>()
+const form = ref<FormInstance>();
+const formData = ref(new Profile());
 
-const checkPhone = (rule: any, value: any, callback: any) => {
+function checkField(rule: any, value: any, callback: any) {
+  if (rule.field === "phone") {
     if (value && !isPhone(value)) {
-        callback(new Error("输入的手机号不合法"));
+      callback(new Error("输入的手机号不合法"));
     }
-    callback();
-}
-const validOldPass = (rule: any, value: any, callback: any) => {
+  } else if (rule.field === "oldPassword") {
     if (formData.value.password && !value) {
-        callback(new Error("请输入旧密码"))
+      callback(new Error("请输入旧密码"));
     }
-    callback();
-}
-const validPass = (rule: any, value: any, callback: any) => {
-    if (value !== '' && comfirmPass.value) {
-        if (!form.value) return;
-        form.value.validateField("comfirmPass", () => { })
+  } else if (rule.field === "password") {
+    if (value !== "" && comfirmPass.value) {
+      if (!form.value) return;
+      form.value.validateField("comfirmPass", () => {});
     }
-    if (value !== '' && !formData.value.oldPassword) {
-        if (!form.value) return;
-        form.value.validateField("oldPassword", () => { })
+    if (value !== "" && !formData.value.oldPassword) {
+      if (!form.value) return;
+      form.value.validateField("oldPassword", () => {});
     }
-    callback();
-}
-const validConfirmPass = (rule: any, value: any, callback: any) => {
-    if (formData.value.password && comfirmPass.value === '') {
-        callback(new Error("请再次输入密码"))
-    } else if (comfirmPass.value !== formData.value.password) {
-        callback(new Error("两次输入的密码不一致"))
+  } else if (rule.field === "comfirmPass") {
+    if (formData.value.password && comfirmPass.value === "") {
+      callback(new Error("请再次输入密码"));
+    } else if (
+      formData.value.password &&
+      comfirmPass.value !== formData.value.password
+    ) {
+      callback(new Error("两次输入的密码不一致"));
     }
-    if (value !== '' && !formData.value.oldPassword) {
-        if (!form.value) return;
-        form.value.validateField("oldPassword", () => { })
+    if (value !== "" && !formData.value.oldPassword) {
+      if (!form.value) return;
+      form.value.validateField("oldPassword", () => {});
     }
-    callback()
+  }
+  callback();
 }
 
 const rules = ref<FormRules>({
-    nickname: [
-        { required: true, message: "昵称不能为空", trigger: "blur" }
-    ],
-    phone: [
-        { validator: checkPhone, trigger: "blur" }
-    ],
-    oldPassword: [
-        { validator: validOldPass, trigger: "blur" }
-    ],
-    password: [
-        { validator: validPass, trigger: "blur" }
-    ],
-    comfirmPass: [
-        { validator: validConfirmPass, trigger: "blur" }
-    ]
+  nickname: [{ required: true, message: "昵称不能为空", trigger: "blur" }],
+  phone: [{ validator: checkField, trigger: "blur" }],
+  oldPassword: [{ validator: checkField, trigger: "blur" }],
+  password: [{ validator: checkField, trigger: "blur" }],
+  comfirmPass: [{ validator: checkField, trigger: "blur" }],
+});
 
-})
+const confirmBtnLoading = ref(false);
 
-let comfirmPass = ref('');
+const comfirmPass = ref("");
 
-const errorHandler = () => true
+const showUpload = ref(false);
 
-let show = ref(false)
+/**
+ * the datebase64 url of created image
+ */
+const imgDataUrl = ref("");
 
-let imgDataUrl = ref('') // the datebase64 url of created image
+const headers = {
+  Authorization: localStorage.get("token"),
+};
 
-let headers = ({
-    Authorization: localStorage.get('token')
-})
-
-const uploadAvatarUrl = `${import.meta.env.VITE_APP_BASE_API}/admin/user/uploadAvatar`
+const uploadAvatarUrl = `${
+  import.meta.env.VITE_APP_BASE_API
+}/admin/user/avatarUpload`;
 
 const { useUserStore } = useStore();
 
-const avatar = computed(() => useUserStore.avatar)
+const avatar = computed(() => useUserStore.avatar);
+
+const username = ref("");
 
 const handleComfirm = (formEl: FormInstance | undefined) => {
-    if (!formEl) return
-    formEl.validate((valid) => {
-        if (valid) {
-            comfirmLoading.value = true;
-            profileEdit(formData.value).then(() => {
-                ElMessage({
-                    type: "success",
-                    message: "修改成功"
-                });
-                useUserStore.getUserInfo()
-                comfirmLoading.value = false;
-            }).catch(() => {
-                comfirmLoading.value = false;
-            })
-        }
-    })
-}
+  if (!formEl) return;
+  formEl.validate((valid) => {
+    if (valid) {
+      confirmBtnLoading.value = true;
+      profileEdit(formData.value)
+        .then(() => {
+          ElMessage.success("修改成功");
+          useUserStore.getUserInfo();
+          confirmBtnLoading.value = false;
+        })
+        .catch(() => {
+          confirmBtnLoading.value = false;
+        });
+    }
+  });
+};
 
 function handleReset() {
-    formData.value = new User();
-    comfirmPass.value = "";
-    form.value?.resetFields();
-    initFormData();
+  formData.value = new Profile();
+  comfirmPass.value = "";
+  form.value?.resetFields();
+  initFormData();
 }
 
 function initFormData() {
-    formData.value.username = useUserStore.username;
-    formData.value.nickname = useUserStore.nickname;
-    formData.value.phone = useUserStore.phone;
-    imgDataUrl.value = useUserStore.avatar;
+  username.value = useUserStore.username;
+  formData.value.nickname = useUserStore.nickname;
+  formData.value.phone = useUserStore.phone;
+  imgDataUrl.value = useUserStore.avatar;
 }
 
-function cropSuccess(url: any, field: any) {
-    imgDataUrl.value = url;
+function cropSuccess(url: any) {
+  imgDataUrl.value = url;
 }
 
 function cropUploadSuccess() {
-    useUserStore.getUserInfo();
+  useUserStore.getUserInfo();
 }
 
 function cropUploadFail() {
-    imgDataUrl.value = useUserStore.avatar;
+  imgDataUrl.value = useUserStore.avatar;
 }
 
 function toggleShow() {
-    show.value = !show.value;
+  showUpload.value = !showUpload.value;
 }
 
 onMounted(() => {
-    initFormData()
+  initFormData();
 });
 </script>
 
 <template>
-    <div class='app-container'>
-        <el-form ref="form" :model="formData" :rules="rules" label-width="85px" style="width: 500px">
-            <el-form-item label="头像" prop="username">
-                <el-avatar shape="square" :size="100" fit="fill" :src="imgDataUrl" @error="errorHandler"
-                    @click="toggleShow" />
-            </el-form-item>
-            <el-form-item label="用户名" prop="username">
-                <el-input v-model="formData.username" autocomplete="off" disabled />
-            </el-form-item>
-            <el-form-item label="用户昵称" prop="nickname">
-                <el-input v-model="formData.nickname" autocomplete="off" />
-            </el-form-item>
-            <el-form-item label="手机号码" prop="phone">
-                <el-input v-model="formData.phone" autocomplete="off" />
-            </el-form-item>
-            <el-form-item label="原密码" prop="oldPassword">
-                <el-input type="password" v-model="formData.oldPassword" autocomplete="off" />
-            </el-form-item>
-            <el-form-item label="新密码" prop="password">
-                <el-input type="password" v-model="formData.password" autocomplete="off" />
-            </el-form-item>
-            <el-form-item label="确认密码" prop="comfirmPass">
-                <el-input type="password" v-model="comfirmPass" autocomplete="off" />
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="handleComfirm(form)" :loading="comfirmLoading">确认</el-button>
-                <el-button @click="handleReset">重置</el-button>
-            </el-form-item>
-        </el-form>
-        <MyUpload :no-rotate="false" field="file" @crop-success="cropSuccess" @crop-upload-success="cropUploadSuccess"
-            @crop-upload-fail="cropUploadFail" v-model="show" :width="300" :height="300" :url="uploadAvatarUrl"
-            :params="{username: formData.username, avatar: avatar}" :headers="headers" img-format="png">
-        </MyUpload>
-    </div>
+  <div class="app-container">
+    <el-form
+      ref="form"
+      :model="formData"
+      :rules="rules"
+      label-width="85px"
+      style="width: 500px"
+    >
+      <el-form-item label="头像" prop="username">
+        <el-avatar
+          shape="square"
+          :size="100"
+          fit="fill"
+          :src="imgDataUrl"
+          @click="toggleShow"
+        />
+      </el-form-item>
+      <el-form-item label="用户名" prop="username">
+        <el-input v-model="username" autocomplete="off" disabled />
+      </el-form-item>
+      <el-form-item label="用户昵称" prop="nickname">
+        <el-input v-model="formData.nickname" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="手机号码" prop="phone">
+        <el-input v-model="formData.phone" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="原密码" prop="oldPassword">
+        <el-input
+          type="password"
+          v-model="formData.oldPassword"
+          autocomplete="off"
+        />
+      </el-form-item>
+      <el-form-item label="新密码" prop="password">
+        <el-input
+          type="password"
+          v-model="formData.password"
+          autocomplete="off"
+        />
+      </el-form-item>
+      <el-form-item label="确认密码" prop="comfirmPass">
+        <el-input type="password" v-model="comfirmPass" autocomplete="off" />
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          type="primary"
+          @click="handleComfirm(form)"
+          :loading="confirmBtnLoading"
+          >确认</el-button
+        >
+        <el-button @click="handleReset">重置</el-button>
+      </el-form-item>
+    </el-form>
+    <MyUpload
+      v-model="showUpload"
+      :no-rotate="false"
+      :width="300"
+      :height="300"
+      :url="uploadAvatarUrl"
+      :params="{ username: username, avatar: avatar }"
+      :headers="headers"
+      img-format="png"
+      field="file"
+      @crop-success="cropSuccess"
+      @crop-upload-success="cropUploadSuccess"
+      @crop-upload-fail="cropUploadFail"
+    >
+    </MyUpload>
+  </div>
 </template>
 
 <style scoped lang="scss">
 .el-avatar {
-    border: 1px dashed #d9d9d9;
-    cursor: pointer;
-    overflow: hidden;
-    background: none;
+  border: 1px dashed #d9d9d9;
+  cursor: pointer;
+  overflow: hidden;
+  background: none;
 }
 
 .el-avatar:hover {
-    border-color: #1E90FF;
+  border-color: #1e90ff;
 }
 </style>

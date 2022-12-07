@@ -1,75 +1,94 @@
-import request from '@/util/axios';
-import type { AxiosPromise, Method } from 'axios';
+import type { AxiosPromise } from "axios";
 
-import type { QueryParam, Role, RoleMemberQueryParam, RoleMember, AllocationRoleUserDTO, AllocationRoleMenuDTO } from '@/entity/system/role'
-import type { ResponseData } from '@/entity';
+import request from "@/util/axios";
+
+import type { ResponseData, BaseQuery } from "@/entity";
+import type {
+  Role,
+  RoleMemberQuery,
+  RoleMember,
+  RoleUserAllocation,
+  RoleMenuAllocation,
+} from "@/entity/system/role";
+
+const BASE_URL = "/admin/role";
 
 /**
- * 获取所有角色
+ * 获取角色
+ * @param query 查询参数
+ * @returns 角色
  */
-function roles(param: QueryParam): AxiosPromise<ResponseData<Array<Role>>> {
+function getRoles(query: BaseQuery): AxiosPromise<ResponseData<Array<Role>>> {
+  return request.get(BASE_URL, { params: query });
+}
+
+/**
+ * 新增或编辑角色
+ * @param role 角色
+ * @param isEdit 是否编辑
+ */
+function saveOrUpdate(role: Role, isEdit: boolean): AxiosPromise<any> {
   return request({
-    url: '/admin/role',
-    method: 'get',
-    params: param
+    url: BASE_URL,
+    method: isEdit ? "put" : "post",
+    data: role,
   });
 }
 
-function saveOrUpdate(param: Role, isUpdate: boolean = false): AxiosPromise<any> {
-  let method: Method = "POST";
-  if (!isUpdate) {
-    method = "PUT"
-  }
-  return request({
-    url: "/admin/role",
-    method: method,
-    data: param
-  })
-}
-
-function del(ids: string): AxiosPromise<any> {
-  return request({
-    url: "/admin/role?ids=" + ids,
-    method: "delete"
-  })
+/**
+ * 角色删除
+ *
+ * @param ids 待删除 ID，多个以逗号分隔
+ */
+function deleteRole(ids: string): AxiosPromise<any> {
+  return request.delete(`${BASE_URL}/${ids}`);
 }
 
 /**
  * 获取所有角色
+ *
+ * @return 角色
  */
 function getAllRoles(): AxiosPromise<Array<Role>> {
-  return request({
-    url: '/admin/role/allRoles',
-    method: 'get'
-  });
+  return request.get(`${BASE_URL}/allRoles`);
 }
 
 /**
- * 获取角色成员
- * @param queryParam 查询参数
+ * 角色成员
+ *
+ * @param query 查询参数
+ * @return 角色成员
  */
-function getRoleMembers (queryParam: RoleMemberQueryParam): AxiosPromise<ResponseData<Array<RoleMember>>> {
-  return request({
-    url: "/admin/role/roleMembers",
-    method: "get",
-    params: queryParam
-  })
+function getRoleMembers(
+  query: RoleMemberQuery
+): AxiosPromise<ResponseData<Array<RoleMember>>> {
+  return request.get(`${BASE_URL}/roleMembers`, { params: query });
 }
 
-function allocationRoleUser (roleUser: AllocationRoleUserDTO): AxiosPromise<any> {
-  return request({
-    url: "/admin/role/allocationRoleUser",
-    method: "post",
-    data: roleUser
-  })
+/**
+ * 为角色分配用户
+ *
+ * @param dto RoleUserAllocationDTO
+ */
+function allocateRoleUser(dto: RoleUserAllocation): AxiosPromise<any> {
+  return request.post(`${BASE_URL}/roleUserAllocation`, dto);
 }
 
-function allocateRoleMenu (allocationRoleMenuDto: AllocationRoleMenuDTO): AxiosPromise<any> {
-  return request({
-    url: "/admin/role/allocationRoleMenu",
-    method: "post",
-    data: allocationRoleMenuDto
-  })
+/**
+ * 为角色分配菜单
+ *
+ * @param dto RoleMenuAllocationDTO
+ */
+function allocateRoleMenu(dto: RoleMenuAllocation): AxiosPromise<any> {
+  return request.post(`${BASE_URL}/roleMenuAllocation`, dto);
 }
 
-export { roles, saveOrUpdate, del, getAllRoles, getRoleMembers, allocationRoleUser, allocateRoleMenu }
+export {
+  getRoles,
+  saveOrUpdate,
+  deleteRole,
+  getAllRoles,
+  getRoleMembers,
+  allocateRoleUser,
+  allocateRoleMenu,
+};

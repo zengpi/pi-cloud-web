@@ -1,13 +1,11 @@
-
-  
 <script setup lang="ts">
-import { onBeforeMount, ref, watch } from 'vue';
-import { useRoute, type RouteLocationMatched } from 'vue-router';
-import { ArrowRight } from "@element-plus/icons-vue"
-import { compile } from 'path-to-regexp';
+import { onBeforeMount, ref, watch } from "vue";
+import { useRoute, type RouteLocationMatched } from "vue-router";
+import { ArrowRight } from "@element-plus/icons-vue";
+import { compile } from "path-to-regexp";
 
-import router from '@/router';
-import { genTitle } from '@/util/i18n';
+import router from "@/router";
+import { genTitle } from "@/util/i18n";
 
 const route = useRoute();
 
@@ -16,7 +14,7 @@ const breadcrumbs = ref([] as Array<RouteLocationMatched>);
 watch(
   () => route.path,
   (path) => {
-    if (path.startsWith('/redirect/')) {
+    if (path.startsWith("/redirect/")) {
       return;
     }
     getBreadcrumb();
@@ -25,7 +23,7 @@ watch(
 
 function getBreadcrumb() {
   breadcrumbs.value = route.matched.filter(
-    value => value.meta && value.meta.title
+    (value) => value.meta && value.meta.title
   );
 }
 
@@ -51,8 +49,13 @@ onBeforeMount(() => {
 
 <template>
   <el-breadcrumb class="app-breadcrumb" :separator-icon="ArrowRight">
-    <el-breadcrumb-item v-for="(breadcrumb, index) in breadcrumbs" :key="breadcrumb.path">
-      <span v-if="index === breadcrumbs.length - 1">{{ genTitle(breadcrumb.meta.title) }}</span>
+    <el-breadcrumb-item
+      v-for="(breadcrumb, index) in breadcrumbs"
+      :key="breadcrumb.path"
+    >
+      <span v-if="index === breadcrumbs.length - 1">{{
+        genTitle(breadcrumb.meta.title)
+      }}</span>
       <a v-else @click.prevent="handleClick(breadcrumb)">
         {{ genTitle(breadcrumb.meta.title) }}
       </a>
@@ -67,4 +70,3 @@ onBeforeMount(() => {
   float: left;
 }
 </style>
-  

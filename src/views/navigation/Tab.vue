@@ -1,24 +1,39 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch, onMounted, getCurrentInstance, type ComponentInternalInstance } from 'vue';
-import { useRoute, useRouter, type RouteRecordRaw } from 'vue-router';
-import type { TabPaneName, TabsPaneContext } from 'element-plus';
-import { Refresh, CircleClose, Close, ArrowLeft, ArrowRight, SemiSelect } from '@element-plus/icons-vue';
-import path from 'path-browserify';
+import {
+  computed,
+  nextTick,
+  ref,
+  watch,
+  onMounted,
+  getCurrentInstance,
+  type ComponentInternalInstance,
+} from "vue";
+import { useRoute, useRouter, type RouteRecordRaw } from "vue-router";
+import type { TabPaneName, TabsPaneContext } from "element-plus";
+import {
+  Refresh,
+  CircleClose,
+  Close,
+  ArrowLeft,
+  ArrowRight,
+  SemiSelect,
+} from "@element-plus/icons-vue";
+import path from "path-browserify";
 
-import { genTitle } from '@/util/i18n';
-import useStore from '@/stores';
+import { genTitle } from "@/util/i18n";
+import useStore from "@/stores";
 
-import type { Tab } from '@/entity/navigation';
+import type { Tab } from "@/entity/navigation";
 
-import SvgIcon from '@/components/SvgIcon.vue';
-import settings from '@/settings';
+import SvgIcon from "@/components/SvgIcon.vue";
+import settings from "@/settings";
 
 const route = useRoute();
 const router = useRouter();
 const { useTabStore, useRouterStore } = useStore();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
-const tabValue = ref("")
+const tabValue = ref("");
 const tabMenuVisible = ref(false);
 const targetTab = ref<Tab>({});
 const left = ref(0);
@@ -36,9 +51,7 @@ const isFirstTab = computed(() => {
 
     for (let each of tabs.value) {
       if (!each.meta.fixed) {
-        return (
-          (targetTab.value as Tab).fullPath === each.fullPath
-        );
+        return (targetTab.value as Tab).fullPath === each.fullPath;
       }
     }
 
@@ -46,7 +59,7 @@ const isFirstTab = computed(() => {
   } catch (err) {
     return false;
   }
-})
+});
 
 const isLastTab = computed(() => {
   try {
@@ -57,37 +70,43 @@ const isLastTab = computed(() => {
   } catch (err) {
     return false;
   }
-})
+});
 
-watch(
-  route,
-  () => {
-    appendTab();
-  }
-);
+watch(route, () => {
+  appendTab();
+});
 
 watch(tabMenuVisible, (value) => {
   if (value) {
-    document.body.addEventListener('click', () => tabMenuVisible.value = false);
+    document.body.addEventListener(
+      "click",
+      () => (tabMenuVisible.value = false)
+    );
   } else {
-    document.body.removeEventListener('click', () => tabMenuVisible.value = false);
+    document.body.removeEventListener(
+      "click",
+      () => (tabMenuVisible.value = false)
+    );
   }
 });
 
 function initTabs() {
   const fixedTabs = getFixedTabs(routes.value);
-  fixedTabs.forEach(each => {
+  fixedTabs.forEach((each) => {
     if (each.name) {
       useTabStore.addTab(each);
     }
-  })
-  appendTab()
+  });
+  appendTab();
 }
 
-function getFixedTabs(routes: Array<RouteRecordRaw>, basePath = '/'): Array<Tab> {
+function getFixedTabs(
+  routes: Array<RouteRecordRaw>,
+  basePath = "/"
+): Array<Tab> {
   let fixedTabs: Tab[] = [];
 
-  routes.forEach(route => {
+  routes.forEach((route) => {
     if (route.meta && route.meta.fixed) {
       const tabPath = path.resolve(basePath, route.path);
       fixedTabs.push({
@@ -110,18 +129,19 @@ function getFixedTabs(routes: Array<RouteRecordRaw>, basePath = '/'): Array<Tab>
 
 function appendTab() {
   if (route.name) {
-    tabValue.value = route.path
+    tabValue.value = route.path;
     useTabStore.add(route);
   }
 }
 
 function hasTabToClose() {
   if (targetTab.value.meta && targetTab.value.meta.fixed) {
-    return useTabStore.tabs.some(e => !(e.meta && e.meta.fixed))
-  }
-  else {
-    return useTabStore.tabs.some(e => !(e.meta && e.meta.fixed)
-      && e.fullPath !== targetTab.value.fullPath)
+    return useTabStore.tabs.some((e) => !(e.meta && e.meta.fixed));
+  } else {
+    return useTabStore.tabs.some(
+      (e) =>
+        !(e.meta && e.meta.fixed) && e.fullPath !== targetTab.value.fullPath
+    );
   }
 }
 
@@ -130,20 +150,26 @@ function isFixed(tab: Tab) {
 }
 
 function handleTabClick(tabsPane: TabsPaneContext) {
-  router.push(tabs.value.find((e: any) => e.path === tabsPane.props.name))
+  router.push(tabs.value.find((e: any) => e.path === tabsPane.props.name));
 }
 
 function handleRightClick(e: any) {
   let target = e.target;
   if (!target) return;
 
-  if (target.className instanceof SVGAnimatedString || target.parentNode.className.indexOf("el-tabs__item") > -1) {
+  if (
+    target.className instanceof SVGAnimatedString ||
+    target.parentNode.className.indexOf("el-tabs__item") > -1
+  ) {
     target = target.parentNode;
-    if (target.className instanceof SVGAnimatedString || target.className.indexOf('el-icon') > -1) {
+    if (
+      target.className instanceof SVGAnimatedString ||
+      target.className.indexOf("el-icon") > -1
+    ) {
       target = target.parentNode;
     }
   } else if (target.className.indexOf("el-tabs__item") === -1) {
-    return
+    return;
   }
 
   if (settings.fixedHeader) {
@@ -162,24 +188,24 @@ function handleRightClick(e: any) {
 }
 
 function removeTab(name: TabPaneName) {
-  const tab = tabs.value.find((e: any) => e.path === name)
-  doRemove(tab)
+  const tab = tabs.value.find((e: any) => e.path === name);
+  doRemove(tab);
 }
 
 function doRemove(target: Tab) {
   useTabStore.del(target).then((res: any) => {
     if (target.path === route.path) {
-      toLastTab(res.tabs, target);
+      toLastTab(res.tabs);
     }
   });
 }
 
-function toLastTab(tabs: Tab[], tab?: any) {
+function toLastTab(tabs: Tab[]) {
   const lastTab = tabs.slice(-1)[0];
   if (lastTab && lastTab.fullPath) {
     router.push(lastTab.fullPath);
   } else {
-    router.push('/');
+    router.push("/");
   }
 }
 
@@ -187,7 +213,7 @@ function refreshTab(targetTab: Tab) {
   useTabStore.delCachedTab(targetTab);
   const { fullPath } = targetTab;
   nextTick(() => {
-    router.replace({ path: '/redirect' + fullPath });
+    router.replace({ path: "/redirect" + fullPath });
   });
 }
 
@@ -216,9 +242,9 @@ function closeOtherTabs() {
   useTabStore.delOthers(targetTab.value);
 }
 
-function closeAllTabs(view: Tab) {
+function closeAllTabs() {
   useTabStore.delAllTabs().then((res: any) => {
-    toLastTab(res.visitedViews, view);
+    toLastTab(res.visitedViews);
   });
 }
 
@@ -229,17 +255,35 @@ onMounted(() => {
 
 <template>
   <div class="tabs-container">
-    <el-tabs v-model="tabValue" type="card" @click.right.prevent="handleRightClick" @tab-click="handleTabClick"
-      @tab-remove="removeTab">
-      <el-tab-pane v-for="tab in tabs" :closable="!isFixed(tab)" :key="tab.path" class="tags-item"
-        :label="tab.meta.title" :name="tab.path">
+    <el-tabs
+      v-model="tabValue"
+      type="card"
+      @click.right.prevent="handleRightClick"
+      @tab-click="handleTabClick"
+      @tab-remove="removeTab"
+    >
+      <el-tab-pane
+        v-for="tab in tabs"
+        :closable="!isFixed(tab)"
+        :key="tab.path"
+        class="tags-item"
+        :label="tab.meta.title"
+        :name="tab.path"
+      >
         <template #label>
-          <SvgIcon v-if="tab.meta && tab.meta.icon" :name="tab.meta.icon"></SvgIcon>
-          <span style="margin-left: 5px;">{{ genTitle(tab.meta.title) }}</span>
+          <SvgIcon
+            v-if="tab.meta && tab.meta.icon"
+            :name="tab.meta.icon"
+          ></SvgIcon>
+          <span style="margin-left: 5px">{{ genTitle(tab.meta.title) }}</span>
         </template>
       </el-tab-pane>
     </el-tabs>
-    <ul v-show="tabMenuVisible" :style="{ left: left + 'px', top: top + 'px' }" class="tab-menu">
+    <ul
+      v-show="tabMenuVisible"
+      :style="{ left: left + 'px', top: top + 'px' }"
+      class="tab-menu"
+    >
       <li @click="refreshTab(targetTab)">
         <el-icon>
           <Refresh />
@@ -270,7 +314,7 @@ onMounted(() => {
         </el-icon>
         关闭右侧
       </li>
-      <li v-if="hasTabToClose()" @click="closeAllTabs(targetTab)">
+      <li v-if="hasTabToClose()" @click="closeAllTabs">
         <el-icon>
           <SemiSelect />
         </el-icon>
@@ -314,7 +358,7 @@ onMounted(() => {
   vertical-align: -0.17em;
 }
 
-:deep(.el-tabs--card>.el-tabs__header) {
+:deep(.el-tabs--card > .el-tabs__header) {
   margin: 0 !important;
   border: none;
 

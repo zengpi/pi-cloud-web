@@ -1,50 +1,53 @@
-<template>
-  <div class="icon-select">
-    <el-input v-model="iconName" clearable placeholder="请输入图标名称" @clear="filterIcons" @input="filterIcons">
-      <template #suffix><i class="el-icon-search el-input__icon" /></template>
-    </el-input>
-    <div class="icon-select__list">
-      <div v-for="(item, index) in iconList" :key="index" @click="selectedIcon(item)">
-        <SvgIcon color="#999" :name="item" style="height: 30px; width: 16px; margin-right: 5px" />
-        <span>{{ item }}</span>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref } from 'vue';
-import SvgIcon from '@/components/SvgIcon.vue';
+import { ref } from "vue";
 
-const icons = [] as string[];
-const modules = import.meta.glob('../assets/icons/*.svg');
+import { Search } from "@element-plus/icons-vue";
+
+import SvgIcon from "@/components/SvgIcon.vue";
+
+const modules = import.meta.glob("../assets/icons/*.svg");
+
+const re = /.*\/assets\/icons\/(.*)\.svg/;
+
+/**
+ * ../assets/icons 文件夹中的所有 icon
+ */
+const allIcons: string[] = [];
+/**
+ * 可选 icon，通常是条件过滤后的 icon 列表
+ */
+const optionalIcons = ref(allIcons);
+/**
+ * 搜索值
+ */
+const icon = ref("");
+
+const emit = defineEmits(["select"]);
+
 for (const path in modules) {
-  const p = path.split('assets/icons/')[1].split('.svg')[0];
-  icons.push(p);
+  let iconParseRst = re.exec(path);
+  if (iconParseRst && iconParseRst.length > 1) {
+    allIcons.push(iconParseRst[1]);
+  }
 }
-const iconList = ref(icons);
-
-const iconName = ref('');
-
-const emit = defineEmits(['selected']);
 
 function filterIcons() {
-  iconList.value = icons;
-  if (iconName.value) {
-    iconList.value = icons.filter(
-      (item) => item.indexOf(iconName.value) !== -1
+  optionalIcons.value = allIcons;
+  if (icon.value) {
+    optionalIcons.value = allIcons.filter(
+      (item) => item.indexOf(icon.value) !== -1
     );
   }
 }
 
-function selectedIcon(name: string) {
-  emit('selected', name);
+function selectIcon(name: string) {
+  emit("select", name);
   document.body.click();
 }
 
 function reset() {
-  iconName.value = '';
-  iconList.value = icons;
+  icon.value = "";
+  optionalIcons.value = allIcons;
 }
 
 defineExpose({
@@ -52,22 +55,46 @@ defineExpose({
 });
 </script>
 
+<template>
+  <div class="icon-select">
+    <el-input
+      v-model="icon"
+      clearable
+      placeholder="请输入图标名称"
+      :prefix-icon="Search"
+      @clear="filterIcons"
+      @input="filterIcons"
+    />
+    <el-scrollbar class="icon-select__list">
+      <div
+        v-for="(item, index) in optionalIcons"
+        :key="index"
+        @click="selectIcon(item)"
+      >
+        <SvgIcon :name="item" height="30px" style="margin-right: 5px" />
+        <span>{{ item }}</span>
+      </div>
+    </el-scrollbar>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .icon-select {
   width: 100%;
-  padding: 10px;
 
   &__list {
     height: 200px;
-    overflow-y: scroll;
 
     div {
       height: 30px;
       line-height: 30px;
-      margin-bottom: -5px;
       cursor: pointer;
       width: 33%;
       float: left;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.025);
+      }
     }
 
     span {

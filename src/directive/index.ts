@@ -1,1 +1,6 @@
-export { hasAnyAuthority, hasAuthority, hasAnyRole, hasRole } from './authorize'
+export {
+  hasAnyAuthority,
+  hasAuthority,
+  hasAnyRole,
+  hasRole,
+} from "./authorize";
