@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import path from 'path-browserify';
+import path from "path-browserify";
 
-import { isExternalLink } from '@/util/validate';
-import { genTitle } from '@/util/i18n';
+import { isExternalLink } from "@/util/validate";
+import { genTitle } from "@/util/i18n";
 
-import { MenuTypeEnum } from '@/entity/enums';
+import { MenuTypeEnum } from "@/entity/enums";
 
-import RouterLink from './RouterLink.vue';
-import SvgIcon from '@/components/SvgIcon.vue';
+import RouterLink from "./RouterLink.vue";
+import SvgIcon from "@/components/SvgIcon.vue";
 
 const props = defineProps<{
-  item: any,
-  basePath: string
+  item: any;
+  basePath: string;
 }>();
 
 function resolvePath(routePath: string) {
@@ -22,14 +22,19 @@ function resolvePath(routePath: string) {
     return props.basePath;
   }
   let basePath = props.basePath;
-  if (!basePath) basePath = "/"
+  if (!basePath) basePath = "/";
   return path.resolve(basePath, routePath);
 }
 </script>
 
 <template>
   <div v-if="!item.meta">
-    <SidebarItem v-for="child in item.children" :key="child.path" :item="child" :base-path="resolvePath(child.path)" />
+    <SidebarItem
+      v-for="child in item.children"
+      :key="child.path"
+      :item="child"
+      :base-path="resolvePath(child.path)"
+    />
   </div>
 
   <div v-else-if="item.meta && !item.meta.hidden">
@@ -49,17 +54,21 @@ function resolvePath(routePath: string) {
     <el-sub-menu v-else :index="resolvePath(item.path)">
       <template #title>
         <el-icon>
-          <SvgIcon v-if="item.meta && item.meta.icon" :name="item.meta.icon"></SvgIcon>
+          <SvgIcon
+            v-if="item.meta && item.meta.icon"
+            :name="item.meta.icon"
+          ></SvgIcon>
         </el-icon>
         <span>{{ genTitle(item.meta.title) }}</span>
       </template>
-      <SidebarItem v-for="child in item.children" :key="child.path" :item="child"
-        :base-path="resolvePath(child.path)" />
+      <SidebarItem
+        v-for="child in item.children"
+        :key="child.path"
+        :item="child"
+        :base-path="resolvePath(child.path)"
+      />
     </el-sub-menu>
   </div>
 </template>
 
-<style lang="scss" scoped>
-
-</style>
-  
+<style lang="scss" scoped></style>

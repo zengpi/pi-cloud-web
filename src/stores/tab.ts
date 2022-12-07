@@ -1,21 +1,21 @@
-import { ref } from 'vue'
-import { defineStore } from 'pinia';
-import clone from 'xe-utils/clone'
+import { ref } from "vue";
+import { defineStore } from "pinia";
+import clone from "xe-utils/clone";
 
-import type { Tab } from '@/entity/navigation';
+import type { Tab } from "@/entity/navigation";
 
-const useTabsStore = defineStore('tab', () => {
+const useTabsStore = defineStore("tab", () => {
   /**
    * 标签
    */
-  const tabs = ref<Array<Tab>>([])
+  const tabs = ref<Array<Tab>>([]);
   /**
    * 已缓存标签
    */
-  const cachedTabs = ref<Array<any>>([])
+  const cachedTabs = ref<Array<any>>([]);
 
   function addTab(tab: Tab) {
-    if (tabs.value.some(e => e.path === tab.path)) return;
+    if (tabs.value.some((e) => e.path === tab.path)) return;
     if (tab.meta && tab.meta.fixed) {
       tabs.value.unshift(clone(tab, true));
     } else {
@@ -68,9 +68,7 @@ const useTabsStore = defineStore('tab', () => {
 
   function delLeftTabs(targetTab: Tab) {
     return new Promise((resolve) => {
-      const currIndex = tabs.value.findIndex(
-        e => e.path === targetTab.path
-      );
+      const currIndex = tabs.value.findIndex((e) => e.path === targetTab.path);
       if (currIndex === -1) {
         return;
       }
@@ -93,9 +91,7 @@ const useTabsStore = defineStore('tab', () => {
 
   function delRightTabs(tab: Tab) {
     return new Promise((resolve) => {
-      const currIndex = tabs.value.findIndex(
-        e => e.path === tab.path
-      );
+      const currIndex = tabs.value.findIndex((e) => e.path === tab.path);
       if (currIndex === -1) {
         return;
       }
@@ -170,8 +166,8 @@ const useTabsStore = defineStore('tab', () => {
     delLeftTabs,
     delRightTabs,
     delOthers,
-    delAllTabs
-  }
+    delAllTabs,
+  };
 });
 
 export default useTabsStore;

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { isExternalLink } from '@/util/validate';
-import { useRouter } from 'vue-router';
+import { isExternalLink } from "@/util/validate";
+import { useRouter } from "vue-router";
 
 const props = defineProps<{
-  to: string
-}>()
+  to: string;
+}>();
 
 const router = useRouter();
 </script>

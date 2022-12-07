@@ -1,67 +1,79 @@
-import request from '@/util/axios';
-import type { AxiosPromise } from 'axios';
+import type { AxiosPromise } from "axios";
 
-import type { QueryParam, User, UserImportForm, Token, UserInfo, OptionalUser, LoginForm } from '@/entity/system/user'
-import type { BaseQueryParam, ResponseData } from '@/entity';
+import request from "@/util/axios";
+
+import type { BaseQuery, ResponseData } from "@/entity";
+import type {
+  Query,
+  User,
+  UserImportForm,
+  Token,
+  UserInfo,
+  OptionalUser,
+  LoginForm,
+  UserForm,
+  Profile,
+} from "@/entity/system/user";
+
+const BASE_URL = "/admin/user";
 
 /**
- * 登录
- * @param data
+ * 用户登录
+ * @param loginForm 登录表单
  */
-function login(data: LoginForm): AxiosPromise<Token> {
-  return request.post('/auth/oauth2/token', null, {
-    params: data,
+function login(loginForm: LoginForm): AxiosPromise<Token> {
+  return request.post("/auth/oauth2/token", null, {
+    params: loginForm,
     headers: {
-      Authorization: 'Basic YWRtaW46YWRtaW4=',
+      Authorization: "Basic YWRtaW46YWRtaW4=",
     },
   });
 }
 
 /**
- * 注销
+ * 用户注销
  */
 function logout(): AxiosPromise<any> {
-  return request.post('/auth/logout');
+  return request.post("/auth/logout");
 }
 
 /**
- * 查询
+ * 用户查询
  *
- * @param queryParams
+ * @param query 查询条件
+ * @return 用户
  */
-function users(
-  queryParams: QueryParam
-): AxiosPromise<ResponseData<Array<User>>> {
-  return request.get('/admin/user', {
-    params: queryParams,
+function getUsers(query: Query): AxiosPromise<ResponseData<Array<User>>> {
+  return request.get(BASE_URL, {
+    params: query,
   });
 }
 
 /**
- * 新增
+ * 新增用户
  *
- * @param user
+ * @param userForm 用户表单
  */
-function add(user: User): AxiosPromise<any> {
-  return request.post('/admin/user', user);
+function saveUser(userForm: UserForm): AxiosPromise<any> {
+  return request.post(BASE_URL, userForm);
 }
 
 /**
- * 修改
+ * 编辑用户
  *
- * @param data
+ * @param userForm 用户表单
  */
-function edit(data: User): AxiosPromise<any> {
-  return request.put('/admin/user', data);
+function updateUser(userForm: UserForm): AxiosPromise<any> {
+  return request.put(BASE_URL, userForm);
 }
 
 /**
- * 删除
+ * 删除用户
  *
- * @param ids
+ * @param ids 用户 ID，多个以逗号分隔
  */
-function del(ids: string): AxiosPromise<any> {
-  return request.delete('/admin/user/' + ids);
+function deleteUser(ids: string): AxiosPromise<any> {
+  return request.delete(`${BASE_URL}/${ids}`);
 }
 
 /**
@@ -70,20 +82,36 @@ function del(ids: string): AxiosPromise<any> {
  * @param query
  * @returns
  */
-function exportUser(query: QueryParam): AxiosPromise<ArrayBuffer> {
-  return request.get('/admin/user/export', {
+function exportUser(query: Query): AxiosPromise<ArrayBuffer> {
+  return request.get(`${BASE_URL}/userExport`, {
     params: query,
-    responseType: 'arraybuffer',
+    responseType: "arraybuffer",
   });
 }
 
 /**
- * 下载用户模板
- * @returns
+ * 下载用户导入模板
  */
-function downloadUserTemp(): AxiosPromise<ArrayBuffer> {
-  return request.get('/admin/user/userImportTemp', {
-    responseType: 'arraybuffer',
+function downloadUserImportTemp(): AxiosPromise<ArrayBuffer> {
+  return request.get(`${BASE_URL}/userImportTemp`, {
+    responseType: "arraybuffer",
+  });
+}
+
+/**
+ * 导入用户
+ *
+ * @param userImportForm 用户导入表单
+ */
+function importUser(userImportForm: UserImportForm): AxiosPromise<any> {
+  const formData = new FormData();
+  formData.append("file", userImportForm.file as File);
+  formData.append("deptId", userImportForm.deptId!.toString());
+  formData.append("roleIds", userImportForm.roleIds!.toString());
+  return request.post(`${BASE_URL}/userImport`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
   });
 }
 
@@ -91,42 +119,23 @@ function downloadUserTemp(): AxiosPromise<ArrayBuffer> {
  * 获取用户信息
  */
 function getUserInfo(): AxiosPromise<UserInfo> {
-  return request.get('/admin/user/info');
+  return request.get(`${BASE_URL}/info`);
 }
 
 /**
- * 导入用户
- *
- * @param data 用户数据
+ * 修改个人信息
+ * @param profile 个人信息
  */
-function importUser(data: UserImportForm): AxiosPromise<any> {
-  const formData = new FormData();
-  formData.append('file', data.file as File);
-  formData.append('deptId', data.deptId!.toString());
-  formData.append('roleIds', data.roleIds!.toString());
-  return request.post('/admin/user/import', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+function profileEdit(profile: Profile): AxiosPromise<any> {
+  return request.put(`${BASE_URL}/profileEdit`, profile);
 }
 
 /**
  * 密码重置
  * @param id 待重置密码的用户 ID
  */
-function passReset(id: number): AxiosPromise<any> {
-  return request.get("/admin/user/passReset", {
-    params: { id }
-  })
-}
-
-/**
- * 更新个人信息
- * @param user 个人信息
- */
-function profileEdit(user: User): AxiosPromise<any> {
-  return request.put("/admin/user/profileEdit", user)
+function resetPass(id: number): AxiosPromise<any> {
+  return request.put(`${BASE_URL}/passReset/${id}`);
 }
 
 /**
@@ -134,10 +143,26 @@ function profileEdit(user: User): AxiosPromise<any> {
  * @param query 查询条件
  * @return 可选用户列表
  */
-function optionalUsers(query: BaseQueryParam): AxiosPromise<ResponseData<Array<OptionalUser>>> {
-  return request.get("/admin/user/optionalUsers", {
-    params: query
-  })
+function getOptionalUsers(
+  query: BaseQuery
+): AxiosPromise<ResponseData<Array<OptionalUser>>> {
+  return request.get(`${BASE_URL}/optionalUsers`, {
+    params: query,
+  });
 }
 
-export { login, logout, users, add, edit, del, exportUser, downloadUserTemp, getUserInfo, importUser, passReset, profileEdit, optionalUsers }
+export {
+  login,
+  logout,
+  getUsers,
+  saveUser,
+  updateUser,
+  deleteUser,
+  exportUser,
+  downloadUserImportTemp,
+  getUserInfo,
+  importUser,
+  resetPass,
+  profileEdit,
+  getOptionalUsers,
+};

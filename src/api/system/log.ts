@@ -1,24 +1,29 @@
-import type { AxiosPromise } from "axios"
-import qs from "qs"
+import type { AxiosPromise } from "axios";
+
+import qs from "qs";
 
 import request from "@/util/axios";
 
 import type { ResponseData } from "@/entity";
-import type { Log, QueryParam } from "@/entity/system/log";
+import type { Log, Query } from "@/entity/system/log";
 
-function getLogs(queryParam: QueryParam): AxiosPromise<ResponseData<Log[]>> {
-    return request.get("/admin/log?" + qs.stringify(queryParam, { indices: false }))
+const BASE_URL = "/admin/log";
+
+function getLogs(query: Query): AxiosPromise<ResponseData<Log[]>> {
+  return request.get(`${BASE_URL}?` + qs.stringify(query, { indices: false }));
 }
 
-function delLogs(ids: string): AxiosPromise<any> {
-    return request.delete("/admin/log", { params: { ids: ids } })
+function deleteLogs(ids: string): AxiosPromise<any> {
+  return request.delete(`${BASE_URL}/${ids}`);
 }
 
-function exportLog(queryParam: QueryParam): AxiosPromise<ArrayBuffer> {
-    return request.get("/admin/log/export?" + qs.stringify(queryParam, { indices: false }),
-        {
-            responseType: 'arraybuffer'
-        })
+function exportLog(query: Query): AxiosPromise<ArrayBuffer> {
+  return request.get(
+    `${BASE_URL}/export?` + qs.stringify(query, { indices: false }),
+    {
+      responseType: "arraybuffer",
+    }
+  );
 }
 
-export { getLogs, delLogs, exportLog }
+export { getLogs, deleteLogs, exportLog };

@@ -1,6 +1,5 @@
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
 <template>
-    <div class="app-container">首页</div>
+  <div class="app-container">首页</div>
 </template>

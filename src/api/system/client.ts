@@ -1,31 +1,31 @@
-import type { AxiosPromise, Method } from 'axios';
+import type { AxiosPromise } from "axios";
 
-import request from '@/util/axios';
+import request from "@/util/axios";
 
-import type { ResponseData, BaseQueryParam } from "@/entity";
-import type { RegisteredClient } from '@/entity/system/client';
+import type { ResponseData, BaseQuery } from "@/entity";
+import type { RegisteredClient, ResetPassForm } from "@/entity/system/client";
 
-function getClients(queryParam: BaseQueryParam): AxiosPromise<ResponseData<Array<RegisteredClient>>> {
-    return request.get("/admin/client", { params: queryParam });
+const BASE_URL = "/admin/client";
+
+function getClients(
+  query: BaseQuery
+): AxiosPromise<ResponseData<Array<RegisteredClient>>> {
+  return request.get(BASE_URL, { params: query });
 }
 
-function saveOrUpdate(data: any, isUpdate: boolean = false): AxiosPromise<any> {
-    let method: Method = "POST";
-    if (isUpdate) {
-        method = "PUT"
-    }
-    return request({
-        url: "/admin/client",
-        method: method,
-        data: data
-    })
+function saveOrUpdate(
+  client: RegisteredClient | ResetPassForm,
+  isEdit: boolean
+): AxiosPromise<any> {
+  return request({
+    url: BASE_URL,
+    method: isEdit ? "put" : "post",
+    data: client,
+  });
 }
 
-function delClient(ids: string): AxiosPromise<any> {
-    return request({
-        url: "/admin/client?ids=" + ids,
-        method: "delete"
-    })
+function deleteClient(ids: string): AxiosPromise<any> {
+  return request.delete(`${BASE_URL}/${ids}`);
 }
 
-export { getClients, saveOrUpdate, delClient }
+export { getClients, saveOrUpdate, deleteClient };

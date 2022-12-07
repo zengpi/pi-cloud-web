@@ -1,4 +1,4 @@
-<script setup name="SystemMenu" lang="ts">
+<script setup lang="ts" name="SystemDept">
 import { ref, onMounted } from "vue";
 
 import { ElMessage, ElMessageBox, ElTable } from "element-plus";
@@ -11,28 +11,28 @@ import {
   Refresh,
 } from "@element-plus/icons-vue";
 
-import { getMenuTree, deleteMenu } from "@/api/system/menu";
-
 import { BaseDialog } from "@/entity";
-import { MenuTree, Query } from "@/entity/system/menu";
+import { Query, DeptTree } from "@/entity/system/dept";
+
+import { getDeptTree, deleteDept } from "@/api/system/dept";
 
 import Form from "./Form.vue";
 
-const showQuery = ref<boolean>(true);
+const showQuery = ref(true);
 const query = ref(new Query());
 
 const delBtnLoading = ref(false);
 
 const table = ref(ElTable);
-const tableData = ref<MenuTree[]>([]);
+const tableData = ref<DeptTree[]>([]);
 const loading = ref(false);
 
-const formDialog = ref(new BaseDialog<MenuTree>());
+const formDialog = ref(new BaseDialog<DeptTree>());
 
 function loadData() {
   loading.value = true;
 
-  getMenuTree(query.value)
+  getDeptTree(query.value)
     .then(({ data }) => {
       tableData.value = data;
       loading.value = false;
@@ -52,13 +52,13 @@ function handleAdd() {
   formDialog.value.props.isEdit = false;
 }
 
-function handleEdit(row: MenuTree) {
-  formDialog.value.props.isEdit = true;
+function handleEdit(row: DeptTree) {
   formDialog.value.dialogVisible = true;
+  formDialog.value.props.isEdit = true;
   formDialog.value.props.formData = row;
 }
 
-function handleDel(row: MenuTree) {
+function handleDel(row: DeptTree) {
   if (!row.id) {
     ElMessage.error("id 不能为空");
     return;
@@ -66,14 +66,14 @@ function handleDel(row: MenuTree) {
   doDel(row.id.toString());
 }
 
-const handleDelBatch = () => {
-  const rows: Array<MenuTree> = table.value.getSelectionRows();
+function handleDelBatch() {
+  const rows: Array<DeptTree> = table.value.getSelectionRows();
   if (!rows || rows.length <= 0) {
     ElMessage.warning("至少选择一条记录");
     return;
   }
-  doDel(rows.map((e: MenuTree) => e.id).join(","));
-};
+  doDel(rows.map((e: DeptTree) => e.id).join(","));
+}
 
 function doDel(ids: string) {
   ElMessageBox.confirm("将永久删除选中的记录，是否继续？", "警告", {
@@ -83,7 +83,7 @@ function doDel(ids: string) {
   }).then(() => {
     delBtnLoading.value = true;
 
-    deleteMenu(ids)
+    deleteDept(ids)
       .then(() => {
         ElMessage.success("删除成功");
         loadData();
@@ -108,7 +108,7 @@ onMounted(() => {
           <el-input
             v-model="query.keyWord"
             clearable
-            placeholder="名称/组件路径/权限标识"
+            placeholder="名称"
             class="query-item"
             style="width: auto"
             @keyup.enter="loadData"
@@ -133,7 +133,7 @@ onMounted(() => {
       <div class="tools">
         <div class="tools-left">
           <el-button
-            v-has-authority="['sys_menu_add']"
+            v-has-authority="['sys_dept_add']"
             type="primary"
             :icon="Plus"
             class="tool-item"
@@ -141,7 +141,7 @@ onMounted(() => {
             >新增</el-button
           >
           <el-button
-            v-has-authority="['sys_menu_delete']"
+            v-has-authority="['sys_dept_delete']"
             type="danger"
             :icon="Delete"
             :loading="delBtnLoading"
@@ -163,93 +163,16 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <el-table
-      ref="table"
-      :data="tableData"
-      v-loading="loading"
-      row-key="id"
-      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-    >
+    <el-table ref="table" :data="tableData" v-loading="loading" row-key="id">
       <el-table-column type="selection" width="55" />
-      <el-table-column prop="name" label="菜单名称" width="180" />
-      <el-table-column prop="icon" label="图标" width="70" #default="{ row }">
-        <SvgIcon v-if="row.icon" :name="row.icon" />
-      </el-table-column>
-      <el-table-column
-        prop="path"
-        label="路由路径"
-        width="150"
-        show-overflow-tooltip
-      />
-      <el-table-column prop="componentName" label="组件名称" width="140" />
-      <el-table-column prop="component" label="组件路径" width="180" />
-      <el-table-column prop="permission" label="权限标识" width="120" />
-      <el-table-column prop="sort" label="排序" width="60" />
-      <el-table-column
-        prop="keepAlive"
-        label="是否缓存"
-        width="90"
-        #default="{ row }"
-      >
-        <template v-if="row.type === 2">
-          <el-tag
-            v-if="row.keepAlive === 0"
-            type="warning"
-            class="mx-1"
-            effect="dark"
-            >不缓存
-          </el-tag>
-          <el-tag v-else-if="row.keepAlive === 1" class="mx-1" effect="dark"
-            >缓存</el-tag
-          >
-        </template>
-        <span v-else />
-      </el-table-column>
-      <el-table-column prop="type" label="菜单类型" width="90" />
-      <el-table-column
-        prop="externalLinks"
-        label="是否外链"
-        width="90"
-        #default="{ row }"
-      >
-        <template v-if="row.type === 2">
-          <el-tag
-            v-if="row.externalLinks === 0"
-            type="warning"
-            class="mx-1"
-            effect="dark"
-            >否
-          </el-tag>
-          <el-tag v-else-if="row.externalLinks === 1" class="mx-1" effect="dark"
-            >是</el-tag
-          >
-        </template>
-        <span v-else />
-      </el-table-column>
-      <el-table-column
-        prop="visible"
-        label="是否可见"
-        width="90"
-        #default="{ row }"
-      >
-        <el-tag
-          v-if="row.visible === 0"
-          type="warning"
-          class="mx-1"
-          effect="dark"
-          >不可见
-        </el-tag>
-        <el-tag v-else-if="row.visible === 1" class="mx-1" effect="dark"
-          >可见</el-tag
-        >
-      </el-table-column>
-      <el-table-column prop="redirect" label="重定向路径" width="140" />
-      <el-table-column prop="createTime" label="创建时间" width="170" />
+      <el-table-column prop="name" label="部门名称" />
+      <el-table-column prop="sort" label="排序" />
+      <el-table-column prop="createTime" label="创建时间" />
       <el-table-column fixed="right" label="操作" width="155px" align="center">
         <template #default="scope">
           <el-tooltip content="编辑" placement="top">
             <el-button
-              v-has-authority="['sys_menu_edit']"
+              v-has-authority="['sys_dept_edit']"
               type="primary"
               :icon="Edit"
               @click="handleEdit(scope.row)"
@@ -257,7 +180,7 @@ onMounted(() => {
           </el-tooltip>
           <el-tooltip content="删除" placement="top">
             <el-button
-              v-has-authority="['sys_menu_delete']"
+              v-has-authority="['sys_dept_delete']"
               type="danger"
               :icon="Delete"
               :loading="delBtnLoading"
@@ -269,7 +192,7 @@ onMounted(() => {
     </el-table>
     <Form
       v-if="formDialog.dialogVisible"
-      v-model:dialogVisible="formDialog.dialogVisible"
+      v-model:dialog-visible="formDialog.dialogVisible"
       v-bind="formDialog.props"
       @refresh="loadData"
     />
